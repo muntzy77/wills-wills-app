@@ -40,6 +40,22 @@
       color:var(--primary);
     }
     .logo span{color:var(--accent);}
+    /* Navigation links in header */
+    .nav-links{
+      display:flex;
+      gap:1rem;
+      align-items:center;
+      margin-left:1rem;
+    }
+    .nav-links a{
+      color:var(--muted);
+      text-decoration:none;
+      font-weight:600;
+      font-size:0.95rem;
+    }
+    .nav-links a:hover{
+      color:var(--accent);
+    }
     .btn{
       border-radius:999px;
       padding:0.6rem 1.4rem;
@@ -125,6 +141,12 @@
 <body>
 <header>
   <div class="logo">Will's<span>Wills</span></div>
+  <!-- Navigation links for secondary pages -->
+  <nav class="nav-links">
+    <a href="/about.html">About</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/contact.html">Contact</a>
+  </nav>
   <div>
     <button id="btn-logout" class="btn btn-ghost" style="display:none;">Log Out</button>
   </div>
