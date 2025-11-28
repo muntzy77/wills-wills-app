@@ -12,15 +12,21 @@
       Dark mode base with soft pastel accents and playful typography.
     */
     :root {
-      --bg: #0F172A; /* deep indigo-charcoal */
-      --card-bg: rgba(255,255,255,0.05); /* glassy card background */
-      --card-border: rgba(255,255,255,0.15);
-      --primary-text: #F8FAFC;
-      --muted-text: #94A3B8;
-      --accent: #CCFF00; /* electric lime for CTAs */
-      --accent2: #8B5CF6; /* hyper violet for secondary accents */
-      --error: #EF4444;
-      --success: #10B981;
+      /*
+        Updated colour palette for a completely original aesthetic. The new scheme leans into
+        rich blues and sea‑tones offset with a coral pop of colour. These values are unique
+        to Will’s Wills and move away from the neon lime/violet combination associated with
+        other apps. The muted text colour softens long passages against the dark canvas.  
+      */
+      --bg: #0c1a2b;      /* deep navy with hints of green */
+      --card-bg: rgba(255,255,255,0.04); /* subtle translucent card background */
+      --card-border: rgba(255,255,255,0.12);
+      --primary-text: #f5f7fa;
+      --muted-text: #7b8fa6;
+      --accent: #e85d75; /* warm coral for primary calls to action */
+      --accent2: #4ecdc4; /* aqua‑teal for secondary highlights */
+      --error: #ed4c67;  /* reddish pink for error states */
+      --success: #45b69c; /* calm green for success messages */
     }
     * {
       box-sizing: border-box;
@@ -263,9 +269,10 @@
 <div class="container">
   <!-- Hero Section introducing the service and call to action -->
   <div id="hero" class="hero">
-    <h1>Your ticket to the afterparty.</h1>
-    <p class="subtitle">Online will creation that isn’t boring.</p>
-    <button id="btn-get-started" class="btn btn-accent">Get Started</button>
+    <!-- A fresh, original headline that speaks to leaving a meaningful legacy -->
+    <h1>Plan with heart.<br>Leave your mark.</h1>
+    <p class="subtitle">Estate planning made simple and soulful.</p>
+    <button id="btn-get-started" class="btn btn-accent">Start planning</button>
   </div>
 
   <!-- Auth Card -->
