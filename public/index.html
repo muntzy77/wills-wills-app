@@ -760,7 +760,8 @@
     }
 
     try {
-      const res = await fetch(API_BASE + "/api/will", {
+      // First call the ChatGPT-driven endpoint to generate a will draft
+      const aiRes = await fetch(API_BASE + "/api/generate-will", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -768,9 +769,25 @@
         },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
-      if (!res.ok) {
-        willError.textContent = data.error || "Failed to generate will.";
+      const aiData = await aiRes.json();
+      if (!aiRes.ok) {
+        willError.textContent = aiData.error || "Failed to generate will.";
+        willError.style.display = "block";
+        return;
+      }
+
+      // Then persist the will and user data via the existing /api/will route
+      const saveRes = await fetch(API_BASE + "/api/will", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + authToken
+        },
+        body: JSON.stringify(payload)
+      });
+      const saveData = await saveRes.json();
+      if (!saveRes.ok) {
+        willError.textContent = saveData.error || "Failed to save will.";
         willError.style.display = "block";
         return;
       }
@@ -790,7 +807,8 @@
         paywall.style.display = "none";
         willOutput.style.display = "block";
       }
-      willOutput.textContent = data.willText || "No text returned.";
+      // Display the AI-generated will text
+      willOutput.textContent = aiData.willText || "No text returned.";
     } catch (err) {
       willError.textContent = "Network error.";
       willError.style.display = "block";
