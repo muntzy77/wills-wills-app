@@ -4,38 +4,47 @@
   <meta charset="UTF-8">
   <title>Estate Planning | Will's Wills</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Modern fonts for headings and body -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Dark fintech theme variables */
     :root {
-      --primary: #1F2937;
-      --accent: #20B2AA;
-      --bg: #F3F4F6;
-      --border: #E5E7EB;
-      --muted: #6B7280;
+      --bg: #0F172A;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --primary-text: #F8FAFC;
+      --muted-text: #94A3B8;
+      --accent: #CCFF00;
+      --accent2: #8B5CF6;
+      --error: #EF4444;
+      --success: #10B981;
     }
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
     body {
       background: var(--bg);
-      color: #111827;
+      color: var(--primary-text);
       line-height: 1.6;
     }
     header {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--card-border);
       padding: 1rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .logo {
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--primary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary-text);
+      text-transform: lowercase;
     }
     .logo span {
       color: var(--accent);
@@ -48,39 +57,78 @@
       display: flex;
       gap: 1rem;
       align-items: center;
+      margin-left: 1rem;
     }
     .nav-links a {
-      color: var(--muted);
+      color: var(--muted-text);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-transform: capitalize;
     }
     .nav-links a:hover {
       color: var(--accent);
     }
+    .btn {
+      border-radius: 999px;
+      padding: 0.6rem 1.4rem;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--muted-text);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
     .container {
       max-width: 800px;
       margin: 2rem auto;
-      padding: 1rem;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
     }
     h1 {
       margin-bottom: 1rem;
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
+      font-size: 1.8rem;
     }
     h2 {
       margin-top: 1.5rem;
       margin-bottom: 0.75rem;
-      font-weight: 700;
-      color: var(--primary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--primary-text);
     }
-    p {
-      margin-bottom: 1rem;
+    p, li {
+      margin-bottom: 0.9rem;
+      color: var(--primary-text);
+      font-size: 0.95rem;
     }
     ul {
       margin-left: 1.5rem;
       margin-bottom: 1rem;
     }
     li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
   </style>
 </head>
@@ -94,78 +142,99 @@
       <a href="/planning.html">Estate&nbsp;Planning</a>
       <a href="/dashboard.html">Dashboard</a>
     </nav>
+    <div>
+      <!-- Logout button shown only when user is logged in -->
+      <button id="btn-logout" class="btn btn-ghost" style="display:none;">Log Out</button>
+    </div>
   </header>
   <div class="container">
-    <h1>Estate Planning Essentials</h1>
-    <p>
-      Estate planning is more than just drafting a will—it’s a complete strategy to ensure that your
-      assets are managed and distributed according to your wishes and that your loved ones are cared for
-      when you are no longer around. By documenting your intentions clearly, you help minimise delays
-      and disputes and provide peace of mind for those you leave behind.
-    </p>
+    <div class="card">
+      <h1>Estate Planning Essentials</h1>
+      <p>
+        Estate planning is more than just drafting a will—it’s a complete strategy to ensure that your
+        assets are managed and distributed according to your wishes and that your loved ones are cared for
+        when you are no longer around. By documenting your intentions clearly, you help minimise delays
+        and disputes and provide peace of mind for those you leave behind.
+      </p>
 
-    <h2>Why Plan Your Estate?</h2>
-    <p>
-      A comprehensive estate plan allows you to outline who receives your assets, how and when they
-      should receive them, and who will administer your affairs. It can also reduce potential tax
-      liabilities, protect beneficiaries from personal legal issues and ensure that there is a clear
-      roadmap for dealing with your superannuation and insurance benefits.
-    </p>
+      <h2>Why Plan Your Estate?</h2>
+      <p>
+        A comprehensive estate plan allows you to outline who receives your assets, how and when they
+        should receive them, and who will administer your affairs. It can also reduce potential tax
+        liabilities, protect beneficiaries from personal legal issues and ensure that there is a clear
+        roadmap for dealing with your superannuation and insurance benefits.
+      </p>
 
-    <h2>Key Steps in Estate Planning</h2>
-    <ul>
-      <li><strong>Initial consultation:</strong> Meet with a qualified adviser to discuss your personal
-        circumstances, objectives and concerns. This conversation helps outline the best approach for your
-        estate.</li>
-      <li><strong>Developing a strategy:</strong> After gathering information about your assets,
-        liabilities and family situation, an estate planning strategy is prepared. This may include
-        recommendations on wills, trusts and other instruments tailored to your needs.</li>
-      <li><strong>Document preparation and signing:</strong> Once you are comfortable with the
-        proposed plan, legal documents are drafted for your review. Your adviser will arrange for any
-        required witnesses, ensure that everything is properly signed and help you store the originals
-        securely.</li>
-    </ul>
+      <h2>Key Steps in Estate Planning</h2>
+      <ul>
+        <li><strong>Initial consultation:</strong> Meet with a qualified adviser to discuss your personal
+          circumstances, objectives and concerns. This conversation helps outline the best approach for your
+          estate.</li>
+        <li><strong>Developing a strategy:</strong> After gathering information about your assets,
+          liabilities and family situation, an estate planning strategy is prepared. This may include
+          recommendations on wills, trusts and other instruments tailored to your needs.</li>
+        <li><strong>Document preparation and signing:</strong> Once you are comfortable with the
+          proposed plan, legal documents are drafted for your review. Your adviser will arrange for any
+          required witnesses, ensure that everything is properly signed and help you store the originals
+          securely.</li>
+      </ul>
 
-    <h2>Understanding Testamentary Trusts</h2>
-    <p>
-      A testamentary trust is a trust created by your will that only comes into effect after your death.
-      Instead of giving assets directly to beneficiaries, you appoint a trustee to hold and manage the
-      assets on their behalf. This structure can provide several advantages, including:
-    </p>
-    <ul>
-      <li><strong>Asset protection:</strong> Assets held in the trust are generally insulated from
-        beneficiaries’ personal legal issues such as divorce or bankruptcy.</li>
-      <li><strong>Tax flexibility:</strong> Trustees can distribute income among beneficiaries in a way
-        that may reduce the overall tax payable, and minors can often receive income tax-free up to
-        certain thresholds.</li>
-      <li><strong>Control and guidance:</strong> You can nominate who controls the trust and set out
-        how and when beneficiaries should benefit, which may be especially important if the inheritance is
-        substantial or the beneficiaries are young or vulnerable.</li>
-    </ul>
+      <h2>Understanding Testamentary Trusts</h2>
+      <p>
+        A testamentary trust is a trust created by your will that only comes into effect after your death.
+        Instead of giving assets directly to beneficiaries, you appoint a trustee to hold and manage the
+        assets on their behalf. This structure can provide several advantages, including:
+      </p>
+      <ul>
+        <li><strong>Asset protection:</strong> Assets held in the trust are generally insulated from
+          beneficiaries’ personal legal issues such as divorce or bankruptcy.</li>
+        <li><strong>Tax flexibility:</strong> Trustees can distribute income among beneficiaries in a way
+          that may reduce the overall tax payable, and minors can often receive income tax‑free up to
+          certain thresholds.</li>
+        <li><strong>Control and guidance:</strong> You can nominate who controls the trust and set out
+          how and when beneficiaries should benefit, which may be especially important if the inheritance is
+          substantial or the beneficiaries are young or vulnerable.</li>
+      </ul>
 
-    <h2>Common Questions</h2>
-    <ul>
-      <li><strong>Do I need a will?</strong> If you own property, have superannuation or any other assets,
-        it is wise to have a will. Without one, state laws determine who inherits your estate, which may
-        not align with your wishes.</li>
-      <li><strong>When should I update my will?</strong> Major life events such as marriage, divorce,
-        the birth of a child, buying a home or retiring are good times to review your will and ensure it
-        still reflects your intentions.</li>
-      <li><strong>Who should be my executor?</strong> An executor administers your estate. Choose
-        someone you trust to manage your affairs fairly and diligently, and consider nominating an
-        alternative in case your first choice cannot act.</li>
-      <li><strong>Can I appoint guardians?</strong> If you have minor children, your will should nominate
-        a guardian to care for them if you and their other parent die. This gives you peace of mind that
-        someone you trust will be responsible for their welfare.</li>
-      <li><strong>What about superannuation and insurance?</strong> Superannuation and life insurance
-        benefits often don’t automatically form part of your estate. Consider completing binding
-        nominations to direct these benefits either to your estate or directly to individuals.</li>
-    </ul>
+      <h2>Common Questions</h2>
+      <ul>
+        <li><strong>Do I need a will?</strong> If you own property, have superannuation or any other assets,
+          it is wise to have a will. Without one, state laws determine who inherits your estate, which may
+          not align with your wishes.</li>
+        <li><strong>When should I update my will?</strong> Major life events such as marriage, divorce,
+          the birth of a child, buying a home or retiring are good times to review your will and ensure it
+          still reflects your intentions.</li>
+        <li><strong>Who should be my executor?</strong> An executor administers your estate. Choose
+          someone you trust to manage your affairs fairly and diligently, and consider nominating an
+          alternative in case your first choice cannot act.</li>
+        <li><strong>Can I appoint guardians?</strong> If you have minor children, your will should nominate
+          a guardian to care for them if you and their other parent die. This gives you peace of mind that
+          someone you trust will be responsible for their welfare.</li>
+        <li><strong>What about superannuation and insurance?</strong> Superannuation and life insurance
+          benefits often don’t automatically form part of your estate. Consider completing binding
+          nominations to direct these benefits either to your estate or directly to individuals.</li>
+      </ul>
 
-    <p>
-      This page provides general information only and is not a substitute for legal advice. For
-      guidance tailored to your situation, consider speaking with a qualified professional.
-    </p>
+      <p>
+        This page provides general information only and is not a substitute for legal advice. For
+        guidance tailored to your situation, consider speaking with a qualified professional.
+      </p>
+    </div>
   </div>
+  <script>
+    // Show logout button if user is logged in and handle logout
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnLogout = document.getElementById('btn-logout');
+      const token = localStorage.getItem('wills_token');
+      if (token) {
+        btnLogout.style.display = 'inline-block';
+      }
+      btnLogout.addEventListener('click', () => {
+        localStorage.removeItem('wills_token');
+        localStorage.removeItem('savedWillData');
+        window.location.href = '/';
+      });
+    });
+  </script>
 </body>
 </html>

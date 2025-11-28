@@ -4,38 +4,47 @@
   <meta charset="UTF-8">
   <title>Dashboard | Will's Wills</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Modern fonts for headings and body -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Dark fintech theme variables */
     :root {
-      --primary: #1F2937;
-      --accent: #20B2AA;
-      --bg: #F3F4F6;
-      --border: #E5E7EB;
-      --muted: #6B7280;
+      --bg: #0F172A;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --primary-text: #F8FAFC;
+      --muted-text: #94A3B8;
+      --accent: #CCFF00;
+      --accent2: #8B5CF6;
+      --error: #EF4444;
+      --success: #10B981;
     }
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
     body {
       background: var(--bg);
-      color: #111827;
+      color: var(--primary-text);
       line-height: 1.6;
     }
     header {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--card-border);
       padding: 1rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .logo {
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--primary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary-text);
+      text-transform: lowercase;
     }
     .logo span {
       color: var(--accent);
@@ -48,57 +57,85 @@
       display: flex;
       gap: 1rem;
       align-items: center;
+      margin-left: 1rem;
     }
     .nav-links a {
-      color: var(--muted);
+      color: var(--muted-text);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-transform: capitalize;
     }
     .nav-links a:hover {
       color: var(--accent);
     }
+    .btn {
+      border-radius: 999px;
+      padding: 0.6rem 1.4rem;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 0 12px rgba(204, 255, 0, 0.4);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--muted-text);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
     .container {
       max-width: 800px;
       margin: 2rem auto;
-      padding: 1rem;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
     }
     h1 {
       margin-bottom: 1rem;
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
+      font-size: 1.8rem;
     }
     p {
       margin-bottom: 1rem;
-    }
-    .btn {
-      display: inline-block;
-      padding: 0.6rem 1.4rem;
-      border-radius: 999px;
-      border: none;
-      font-weight: 600;
       font-size: 0.95rem;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
     }
     pre.will-output {
       white-space: pre-wrap;
-      background: #F9FAFB;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
       padding: 1rem;
       max-height: 400px;
       overflow: auto;
       font-size: 0.9rem;
     }
     .error {
-      color: #EF4444;
+      color: var(--error);
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
     .success {
-      color: #10B981;
+      color: var(--success);
       margin-bottom: 1rem;
       font-size: 0.9rem;
     }
@@ -114,17 +151,37 @@
       <a href="/planning.html">Estate&nbsp;Planning</a>
       <a href="/dashboard.html">Dashboard</a>
     </nav>
+    <div>
+      <!-- Logout button shown only when user is logged in -->
+      <button id="btn-logout" class="btn btn-ghost" style="display:none;">Log Out</button>
+    </div>
   </header>
   <div class="container">
-    <h1>Your Dashboard</h1>
-    <p>Access your saved will draft and make changes whenever you need.</p>
-    <div id="dash-error" class="error" style="display:none;"></div>
-    <div id="dash-success" class="success" style="display:none;"></div>
-    <pre class="will-output" id="dash-output">Loading your will...</pre>
-    <button class="btn btn-primary" id="edit-will">Edit My Will</button>
+    <div class="card">
+      <h1>Your Dashboard</h1>
+      <p>Access your saved will draft and make changes whenever you need.</p>
+      <div id="dash-error" class="error" style="display:none;"></div>
+      <div id="dash-success" class="success" style="display:none;"></div>
+      <pre class="will-output" id="dash-output">Loading your will...</pre>
+      <button class="btn btn-primary" id="edit-will">Edit My Will</button>
+    </div>
   </div>
   <script>
-    // Fetch the saved will for the logged-in user
+    // Show logout button if user is logged in and set up logout
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnLogout = document.getElementById('btn-logout');
+      const token = localStorage.getItem('wills_token');
+      if (token) {
+        btnLogout.style.display = 'inline-block';
+      }
+      btnLogout.addEventListener('click', () => {
+        localStorage.removeItem('wills_token');
+        localStorage.removeItem('savedWillData');
+        window.location.href = '/';
+      });
+    });
+
+    // Fetch the saved will for the logged-in user and populate the dashboard
     document.addEventListener('DOMContentLoaded', async () => {
       const authToken = localStorage.getItem('wills_token');
       const dashError = document.getElementById('dash-error');
@@ -155,7 +212,7 @@
           dashOutput.textContent = data.willText;
           dashSuccess.textContent = 'Here is your most recent will draft.';
           dashSuccess.style.display = 'block';
-          // Also save the underlying data to localStorage so the index page can prefill fields
+          // Save data for prefill if available
           if (data.data) {
             localStorage.setItem('savedWillData', JSON.stringify(data.data));
           }
@@ -168,7 +225,7 @@
         dashOutput.style.display = 'none';
       }
 
-      // Clicking edit will takes you back to the questionnaire (home) to amend details
+      // Clicking edit will takes you back to the questionnaire to amend details
       editButton.addEventListener('click', () => {
         window.location.href = '/';
       });

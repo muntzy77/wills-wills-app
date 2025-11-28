@@ -212,6 +212,25 @@
       color: var(--primary-text);
       margin: 1.4rem 0 0.6rem;
     }
+
+    /* Hero section for prominent call‑to‑action */
+    .hero {
+      text-align: center;
+      margin: 3rem auto 2rem;
+      max-width: 800px;
+    }
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 0.8rem;
+      color: var(--primary-text);
+    }
+    .hero .subtitle {
+      color: var(--muted-text);
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
     @media (max-width: 768px) {
       .grid {
         grid-template-columns: 1fr;
@@ -242,6 +261,13 @@
 </header>
 
 <div class="container">
+  <!-- Hero Section introducing the service and call to action -->
+  <div id="hero" class="hero">
+    <h1>Your ticket to the afterparty.</h1>
+    <p class="subtitle">Online will creation that isn’t boring.</p>
+    <button id="btn-get-started" class="btn btn-accent">Get Started</button>
+  </div>
+
   <!-- Auth Card -->
   <div class="card" id="auth-card">
     <div class="tabs">
@@ -289,7 +315,7 @@
     </div>
   </div>
 
-  <!-- App Card -->
+  <!-- App Card (hidden by default; revealed after subscription) -->
   <div class="card" id="app-card" style="display:none;">
     <h2>Will Questionnaire</h2>
     <p class="muted" style="margin-bottom:1rem;">
@@ -486,28 +512,39 @@
   const paywall = document.getElementById("paywall");
   const btnSubscribe = document.getElementById("btn-subscribe");
 
+  // Hide the will output initially
+  willOutput.style.display = "none";
+
   const accessError = document.getElementById("access-error");
   const accessSuccess = document.getElementById("access-success");
   const accessOutput = document.getElementById("access-output");
 
+  // Elements for hero section and Get Started gating
+  const hero = document.getElementById("hero");
+  const btnGetStarted = document.getElementById("btn-get-started");
+
   function setLoggedInState(loggedIn) {
     if (loggedIn) {
+      // Hide authentication forms once logged in
       authCard.style.display = "none";
-      appCard.style.display = "block";
-      accessCard.style.display = "block";
+      // Do not automatically reveal the questionnaire; user must click Get Started and subscribe
+      appCard.style.display = "none";
+      accessCard.style.display = "none";
+      paywall.style.display = "none";
       btnLogout.style.display = "inline-flex";
-
-      // When the user logs in, attempt to pre‑fill the questionnaire with previously saved data
+      // Pre‑fill the questionnaire data so it is ready when shown later
       prefillFromSaved();
     } else {
+      // Show authentication when logged out
       authCard.style.display = "block";
       appCard.style.display = "none";
       accessCard.style.display = "none";
-      btnLogout.style.display = "none";
-
-      // Hide paywall and will output when logged out
       paywall.style.display = "none";
-      willOutput.style.display = "block";
+      btnLogout.style.display = "none";
+      // Reset hero visibility
+      hero.style.display = "block";
+      // Ensure will output and paywall are hidden until logged in
+      willOutput.style.display = "none";
     }
   }
 
@@ -766,8 +803,43 @@
     // For demo purposes, we simply set a flag in localStorage and reveal the will.
     alert("Thank you for subscribing! Your annual subscription has been activated.");
     localStorage.setItem("wills_subscribed", "true");
+    // Hide paywall and hero once subscribed
+    hero.style.display = "none";
     paywall.style.display = "none";
+    // Reveal questionnaire and third‑party access sections after subscription
+    appCard.style.display = "block";
+    accessCard.style.display = "block";
     willOutput.style.display = "block";
+  });
+
+  // Get Started button gating logic
+  btnGetStarted.addEventListener("click", () => {
+    // If the user is not logged in, prompt them to log in or sign up
+    if (!authToken) {
+      alert("Please log in or create an account before getting started.");
+      // Smooth scroll to authentication card for convenience
+      authCard.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    // Once logged in, check subscription status
+    const subscribed = localStorage.getItem("wills_subscribed") === "true";
+    // Hide hero and auth forms once the flow begins
+    hero.style.display = "none";
+    authCard.style.display = "none";
+    if (!subscribed) {
+      // Show paywall card when not subscribed
+      paywall.style.display = "block";
+      // Ensure questionnaire and access sections are hidden
+      appCard.style.display = "none";
+      accessCard.style.display = "none";
+      willOutput.style.display = "none";
+    } else {
+      // Already subscribed: show questionnaire and access sections
+      paywall.style.display = "none";
+      appCard.style.display = "block";
+      accessCard.style.display = "block";
+      willOutput.style.display = "block";
+    }
   });
 
   // Third-party access

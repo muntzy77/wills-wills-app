@@ -4,38 +4,43 @@
   <meta charset="UTF-8">
   <title>Contact | Will's Wills</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #1F2937;
-      --accent: #20B2AA;
-      --bg: #F3F4F6;
-      --border: #E5E7EB;
-      --muted: #6B7280;
+      --bg: #0F172A;
+      --card-bg: rgba(255,255,255,0.05);
+      --card-border: rgba(255,255,255,0.15);
+      --primary-text: #F8FAFC;
+      --muted-text: #94A3B8;
+      --accent: #CCFF00;
+      --accent2: #8B5CF6;
     }
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
     body {
       background: var(--bg);
-      color: #111827;
+      color: var(--primary-text);
       line-height: 1.6;
     }
     header {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--card-border);
       padding: 1rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .logo {
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--primary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--primary-text);
+      text-transform: lowercase;
     }
     .logo span {
       color: var(--accent);
@@ -48,32 +53,77 @@
       display: flex;
       gap: 1rem;
       align-items: center;
+      margin-left: 1rem;
     }
     .nav-links a {
-      color: var(--muted);
+      color: var(--muted-text);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-transform: capitalize;
     }
     .nav-links a:hover {
       color: var(--accent);
     }
+    .btn {
+      border-radius: 999px;
+      padding: 0.7rem 1.6rem;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--muted-text);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
     .container {
       max-width: 800px;
       margin: 2rem auto;
-      padding: 1rem;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
     }
     h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.6rem;
       margin-bottom: 1rem;
-      font-weight: 700;
+      color: var(--primary-text);
     }
     p {
       margin-bottom: 1rem;
+      color: var(--muted-text);
     }
     .contact-info {
       margin-bottom: 1.5rem;
+      color: var(--muted-text);
     }
     .contact-info div {
       margin-bottom: 0.5rem;
+    }
+    a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -87,21 +137,40 @@
       <a href="/planning.html">Estate&nbsp;Planning</a>
       <a href="/dashboard.html">Dashboard</a>
     </nav>
+    <div>
+      <button id="btn-logout" class="btn btn-ghost" style="display:none;">Log Out</button>
+    </div>
   </header>
   <div class="container">
-    <h1>Contact Us</h1>
-    <p>
-      We’d love to hear from you. Whether you have a question about our service, need assistance, or just want to provide feedback, 
-      you can reach us using the contact information below.
-    </p>
-    <div class="contact-info">
-      <div><strong>Email:</strong> support@willswills.com.au</div>
-      <div><strong>Phone:</strong> +61 (0)2 1234 5678</div>
-      <div><strong>Mailing Address:</strong> PO Box 123, Sydney NSW 2000, Australia</div>
+    <div class="card">
+      <h1>Contact Us</h1>
+      <p>
+        We’d love to hear from you. Whether you have a question about our service, need assistance, or just want to provide feedback,
+        you can reach us using the contact information below.
+      </p>
+      <div class="contact-info">
+        <div><strong>Email:</strong> support@willswills.com.au</div>
+        <div><strong>Phone:</strong> +61 (0)2 1234 5678</div>
+        <div><strong>Mailing Address:</strong> PO Box 123, Sydney NSW 2000, Australia</div>
+      </div>
+      <p>
+        Please note that we are unable to provide legal advice via email or phone. For legal guidance, consider consulting a qualified Australian legal practitioner.
+      </p>
     </div>
-    <p>
-      Please note that we are unable to provide legal advice via email or phone. For legal guidance, consider consulting a qualified Australian legal practitioner.
-    </p>
   </div>
+  <script>
+    // Show logout button when user is logged in
+    const btnLogout = document.getElementById('btn-logout');
+    const token = localStorage.getItem('wills_token');
+    if (token) {
+      btnLogout.style.display = 'inline-flex';
+    }
+    btnLogout.addEventListener('click', () => {
+      localStorage.removeItem('wills_token');
+      localStorage.removeItem('savedWillData');
+      localStorage.removeItem('wills_subscribed');
+      window.location.href = '/';
+    });
+  </script>
 </body>
 </html>
