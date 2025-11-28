@@ -340,6 +340,140 @@ Address: ______________________________
   res.json({ willId: willRecord.id, willText });
 });
 
+// ---------- ChatGPT-driven Will Generator ----------
+// This endpoint provides a more structured integration with OpenAI's Chat Completion API.
+// It accepts the same input payload as /api/will but constructs a rich conversation
+// for the model and returns only the generated will text.  Users must be authenticated.
+app.post("/api/generate-will", authMiddleware, async (req, res) => {
+  const {
+    fullName,
+    address,
+    state,
+    maritalStatus,
+    hasChildren,
+    executorName,
+    executorContact,
+    nextOfKinName,
+    nextOfKinContact,
+    lawyerName,
+    lawyerContact,
+    assetsSummary,
+    beneficiariesSummary,
+    funeralWishes,
+    customInstructions
+  } = req.body || {};
+
+  // Basic validation – ensure required fields are present
+  if (!fullName || !address || !state || !maritalStatus || !executorName) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  // Construct a structured conversation for ChatGPT
+  const messages = [
+    {
+      role: "system",
+      content:
+        "You are a cautious Australian wills lawyer. Draft a plain‑language but legally structured Australian will based on user inputs. " +
+        "Include standard clauses like revocation, appointment of executor, gifts and residue, funeral and remains, attestation. " +
+        "Always include a disclaimer that this is a draft and not legal advice."
+    },
+    {
+      role: "user",
+      content: `
+        Full name: ${fullName}
+        Address: ${address}
+        State: ${state}
+        Marital status: ${maritalStatus}
+        Has children: ${hasChildren ? "Yes" : "No"}
+
+        Executor: ${executorName}${executorContact ? ` (${executorContact})` : ""}
+        Next of kin: ${nextOfKinName || "Not specified"}${nextOfKinContact ? ` (${nextOfKinContact})` : ""}
+        Lawyer: ${lawyerName || "Not specified"}${lawyerContact ? ` (${lawyerContact})` : ""}
+
+        Assets summary: ${assetsSummary || "Not specified"}
+        Beneficiaries summary: ${beneficiariesSummary || "Not specified"}
+        Funeral wishes: ${funeralWishes || "None"}
+        Custom instructions: ${customInstructions || "None"}
+      `
+    }
+  ];
+
+  let willText;
+  if (hasOpenAI && openaiClient) {
+    try {
+      const completion = await openaiClient.chat.completions.create({
+        model: "gpt-4.1-mini",
+        messages,
+        temperature: 0.3,
+        max_tokens: 1000
+      });
+      willText = completion.choices[0].message.content.trim();
+    } catch (err) {
+      console.error("OpenAI generate-will error:", err.message);
+      willText = null;
+    }
+  }
+
+  // If AI fails or is not configured, fall back to the existing template generation
+  if (!willText) {
+    // Use the same fallback as /api/will but without saving to DB
+    willText = `
+**DISCLAIMER: This is a draft will template only. It is not legally effective until printed, signed and properly witnessed in accordance with applicable Australian law. You should seek advice from an Australian legal practitioner.**
+
+LAST WILL AND TESTAMENT OF ${fullName.toUpperCase()}
+
+1. REVOCATION  
+I revoke all former wills and testamentary dispositions made by me.
+
+2. DECLARATION  
+I, ${fullName}, of ${address}, ${state}, declare this to be my last will.
+
+3. APPOINTMENT OF EXECUTOR  
+I appoint ${executorName}${executorContact ? ` (${executorContact})` : ""} as Executor of this will.
+
+4. NEXT OF KIN / NOMINATED CONTACT  
+I record ${nextOfKinName || "[Not specified]"} as my next of kin / nominated contact for the administration of my estate and practical matters following my death.
+
+5. LAWYER  
+I record ${lawyerName || "[Not specified]"}${lawyerContact ? ` (${lawyerContact})` : ""} as my preferred legal practitioner to assist in administering my estate.
+
+6. DISPOSITION OF ESTATE  
+I give, devise and bequeath all of my estate, both real and personal, as follows:
+${beneficiariesSummary || "[You must specify your beneficiaries and the shares or gifts they receive]."}
+
+Assets overview (for reference only, not exhaustive or limiting):  
+${assetsSummary || "[You have not provided any assets summary]"}
+
+7. FUNERAL AND REMAINS  
+My non-binding wish is as follows:  
+${funeralWishes || "[No specific funeral wishes stated]"}
+
+8. CUSTOM INSTRUCTIONS  
+${customInstructions || "[No additional instructions]"}
+
+9. THIRD PARTY ACCESS TO THIS WILL  
+No third party (including any next of kin, lawyer or other person) is to be granted access to or copies of this will by any custodian platform unless and until a valid Australian death certificate in respect of me has been provided and electronically verified against the records of the relevant Australian registry via a secure government-integrated API, or by other legally accepted proof-of-death mechanism.
+
+10. ATTESTATION  
+Signed as a will by ${fullName} in the presence of the witnesses named below, who were present at the same time, and who each signed this will in my presence and in the presence of each other.
+
+_____________________________  
+Signature of testator: ${fullName}  
+
+Witness 1: _____________________________  
+Name: _________________________________  
+Address: ______________________________  
+
+Witness 2: _____________________________  
+Name: _________________________________  
+Address: ______________________________  
+`;
+  }
+
+  // Return the generated will text; note that this route does not save the data to db
+  res.json({ willText });
+});
+
 // Retrieve the current user's will
 app.get("/api/will", authMiddleware, (req, res) => {
   const db = loadDb();
