@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard | Will's Wills</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1F2937;
+      --accent: #20B2AA;
+      --bg: #F3F4F6;
+      --border: #E5E7EB;
+      --muted: #6B7280;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: #111827;
+      line-height: 1.6;
+    }
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+    .logo span {
+      color: var(--accent);
+    }
+    .logo a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    p {
+      margin-bottom: 1rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    pre.will-output {
+      white-space: pre-wrap;
+      background: #F9FAFB;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      max-height: 400px;
+      overflow: auto;
+      font-size: 0.9rem;
+    }
+    .error {
+      color: #EF4444;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    .success {
+      color: #10B981;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><a href="/">Will's<span>Wills</span></a></div>
+    <nav class="nav-links">
+      <a href="/about.html">About</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/planning.html">Estate&nbsp;Planning</a>
+      <a href="/dashboard.html">Dashboard</a>
+    </nav>
+  </header>
+  <div class="container">
+    <h1>Your Dashboard</h1>
+    <p>Access your saved will draft and make changes whenever you need.</p>
+    <div id="dash-error" class="error" style="display:none;"></div>
+    <div id="dash-success" class="success" style="display:none;"></div>
+    <pre class="will-output" id="dash-output">Loading your will...</pre>
+    <button class="btn btn-primary" id="edit-will">Edit My Will</button>
+  </div>
+  <script>
+    // Fetch the saved will for the logged-in user
+    document.addEventListener('DOMContentLoaded', async () => {
+      const authToken = localStorage.getItem('wills_token');
+      const dashError = document.getElementById('dash-error');
+      const dashSuccess = document.getElementById('dash-success');
+      const dashOutput = document.getElementById('dash-output');
+      const editButton = document.getElementById('edit-will');
+
+      if (!authToken) {
+        dashError.textContent = 'You must be logged in to view your dashboard. Please log in first.';
+        dashError.style.display = 'block';
+        dashOutput.style.display = 'none';
+        editButton.style.display = 'none';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/will', {
+          headers: { 'Authorization': 'Bearer ' + authToken }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          dashError.textContent = data.error || 'Unable to load your will.';
+          dashError.style.display = 'block';
+          dashOutput.style.display = 'none';
+          return;
+        }
+        if (data.willText) {
+          dashOutput.textContent = data.willText;
+          dashSuccess.textContent = 'Here is your most recent will draft.';
+          dashSuccess.style.display = 'block';
+          // Also save the underlying data to localStorage so the index page can prefill fields
+          if (data.data) {
+            localStorage.setItem('savedWillData', JSON.stringify(data.data));
+          }
+        } else {
+          dashOutput.textContent = 'You have not generated a will yet. Please complete the questionnaire on the home page.';
+        }
+      } catch (e) {
+        dashError.textContent = 'Network error while loading your will.';
+        dashError.style.display = 'block';
+        dashOutput.style.display = 'none';
+      }
+
+      // Clicking edit will takes you back to the questionnaire (home) to amend details
+      editButton.addEventListener('click', () => {
+        window.location.href = '/';
+      });
+    });
+  </script>
+</body>
+</html>

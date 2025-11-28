@@ -146,6 +146,9 @@
     <a href="/about.html">About</a>
     <a href="/terms.html">Terms</a>
     <a href="/contact.html">Contact</a>
+    <a href="/planning.html">Estate&nbsp;Planning</a>
+    <!-- Link to the user dashboard for viewing and amending saved wills -->
+    <a href="/dashboard.html">Dashboard</a>
   </nav>
   <div>
     <button id="btn-logout" class="btn btn-ghost" style="display:none;">Log Out</button>
@@ -331,7 +334,14 @@
     <button class="btn btn-primary" id="btn-generate">Generate My Will</button>
 
     <div class="section-title" style="margin-top:1.5rem;">Generated Will Draft</div>
+    <!-- The will output will be shown here after generation. Hidden until subscription is confirmed. -->
     <pre class="will-output" id="will-output">No will generated yet.</pre>
+
+    <!-- Paywall prompt shown when the user has not subscribed yet. This asks for a yearly fee before revealing the will. -->
+    <div id="paywall" style="display:none;margin-top:1rem;padding:1rem;background:#FFF5F5;border:1px solid #FEE2E2;border-radius:12px;">
+      <p style="margin-bottom:1rem;">To access your full Will draft, please subscribe for <strong>AUD $30 per year</strong>. This subscription supports secure storage and future amendments.</p>
+      <button class="btn btn-accent" id="btn-subscribe">Subscribe for AUD $30/year</button>
+    </div>
   </div>
 
   <!-- Third-party access card -->
@@ -387,6 +397,8 @@
   const willError = document.getElementById("will-error");
   const willSuccess = document.getElementById("will-success");
   const willOutput = document.getElementById("will-output");
+  const paywall = document.getElementById("paywall");
+  const btnSubscribe = document.getElementById("btn-subscribe");
 
   const accessError = document.getElementById("access-error");
   const accessSuccess = document.getElementById("access-success");
@@ -398,11 +410,18 @@
       appCard.style.display = "block";
       accessCard.style.display = "block";
       btnLogout.style.display = "inline-flex";
+
+      // When the user logs in, attempt to pre‑fill the questionnaire with previously saved data
+      prefillFromSaved();
     } else {
       authCard.style.display = "block";
       appCard.style.display = "none";
       accessCard.style.display = "none";
       btnLogout.style.display = "none";
+
+      // Hide paywall and will output when logged out
+      paywall.style.display = "none";
+      willOutput.style.display = "block";
     }
   }
 
@@ -410,6 +429,35 @@
     setLoggedInState(true);
   } else {
     setLoggedInState(false);
+  }
+
+  /**
+   * Load saved form data from localStorage and prefill the questionnaire inputs. When a user revisits the
+   * questionnaire after creating a will, this helps them amend details without starting from scratch.
+   */
+  function prefillFromSaved() {
+    try {
+      const saved = localStorage.getItem("savedWillData");
+      if (!saved) return;
+      const d = JSON.parse(saved);
+      document.getElementById("fullName").value = d.fullName || "";
+      document.getElementById("address").value = d.address || "";
+      document.getElementById("state").value = d.state || "";
+      document.getElementById("maritalStatus").value = d.maritalStatus || "";
+      document.getElementById("hasChildren").value = d.hasChildren ? "yes" : "no";
+      document.getElementById("executorName").value = d.executorName || "";
+      document.getElementById("executorContact").value = d.executorContact || "";
+      document.getElementById("nextOfKinName").value = d.nextOfKinName || "";
+      document.getElementById("nextOfKinContact").value = d.nextOfKinContact || "";
+      document.getElementById("lawyerName").value = d.lawyerName || "";
+      document.getElementById("lawyerContact").value = d.lawyerContact || "";
+      document.getElementById("assetsSummary").value = d.assetsSummary || "";
+      document.getElementById("beneficiariesSummary").value = d.beneficiariesSummary || "";
+      document.getElementById("funeralWishes").value = d.funeralWishes || "";
+      document.getElementById("customInstructions").value = d.customInstructions || "";
+    } catch (e) {
+      console.warn("Failed to prefill saved data", e);
+    }
   }
 
   // Tabs
@@ -603,13 +651,37 @@
         willError.style.display = "block";
         return;
       }
-      willOutput.textContent = data.willText || "No text returned.";
+
+      // Save the form payload to localStorage for later amendments
+      localStorage.setItem("savedWillData", JSON.stringify(payload));
+
       willSuccess.textContent = "Will generated and saved on server.";
       willSuccess.style.display = "block";
+
+      // If the user is not subscribed yet, hide the will and show paywall
+      const subscribed = localStorage.getItem("wills_subscribed") === "true";
+      if (!subscribed) {
+        willOutput.style.display = "none";
+        paywall.style.display = "block";
+      } else {
+        paywall.style.display = "none";
+        willOutput.style.display = "block";
+      }
+      willOutput.textContent = data.willText || "No text returned.";
     } catch (err) {
       willError.textContent = "Network error.";
       willError.style.display = "block";
     }
+  });
+
+  // Handle subscription button: simulate payment and unlock the will
+  btnSubscribe.addEventListener("click", () => {
+    // In a real app, you would integrate a payment gateway here.
+    // For demo purposes, we simply set a flag in localStorage and reveal the will.
+    alert("Thank you for subscribing! Your annual subscription has been activated.");
+    localStorage.setItem("wills_subscribed", "true");
+    paywall.style.display = "none";
+    willOutput.style.display = "block";
   });
 
   // Third-party access
